@@ -1,0 +1,64 @@
+.carousel-img {
+    height: 800px;
+    object-fit: cover;
+}
+
+.logo {
+    width: 200px;
+    height: auto;
+}
+
+.navbar-custom {
+    background-color: #264653;
+}
+
+.nav-link {
+    color: white;
+}
+
+.nav-link:hover {
+    color: white;
+}
+
+.hero {
+    background-image: url("../images/image 1.png");
+    background-size: cover;
+    background-position: center;
+    height: 750px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 200px;
+}
+
+/*botones*/
+
+.btn-crear {
+    background-color: #f77f00;
+    color: white;
+    border: none;
+}
+
+.btn-crear:hover {
+    background-color: #264653;
+    color: white;
+}
+
+.btn-login {
+    background-color: #f77f00;
+    color: white;
+    border: none;
+}
+
+.btn-login:hover {
+    background-color: #264653;
+    color: white;
+}
+
+/* pie de pagina*/
+.footer-custom {
+    background-color: #264653;
+    color: white;
+    text-align: center;
+    padding: 25px;
+}

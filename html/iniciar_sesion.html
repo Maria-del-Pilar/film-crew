@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de sesión</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/iniciar_sesion.css">
+
+</head>
+<body>
+    <!-- barra navegacion -->
+
+<nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="../index.html">
+            <img src="../images/Logowhite.png" alt="FILM CREW" class="logo">
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                data-bs-target="#navbarNav" aria-controls="navbarNav" 
+                aria-expanded="false" aria-label="Toggle navigation">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+
+            <ul class="navbar-nav">
+
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="proyectos.html">Proyectos</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="chats.html">Chats</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="perfil.html">Perfil</a>
+                </li>
+
+            </ul>
+
+        </div>
+    </div>
+</nav>
+
+    <!-- formulario -->
+
+<!-- Sección para centrar la tarjeta debajo del navbar -->
+  <div class="login-section">
+    <div class="login-card">
+      
+      <!-- Panel Izquierdo: Imagen -->
+      <div class="login-image">
+        <img src="../images/inicio1.jpg" alt="Camarógrafo CINEACTA / Film Crew">
+      </div>
+
+      <!-- Panel Derecho: Contenido -->
+      <div class="login-content">
+        
+        <!-- Pestañas de Navegación -->
+        <div class="tabs">
+          <button type="button" id="tab-login" class="tab-btn active">Iniciar sesión</button>
+          <button type="button" id="tab-register" class="tab-btn">Crear cuenta</button>
+        </div>
+
+        <!-- Formulario 1: Iniciar Sesión -->
+        <form id="form-login" class="auth-form active">
+          <div class="form-group">
+            <label for="login-user">Usuario</label>
+            <input type="text" id="login-user" required>
+          </div>
+
+          <div class="form-group">
+            <label for="login-pass">Contraseña</label>
+            <input type="password" id="login-pass" required>
+          </div>
+
+          <button type="submit" class="btn-submit">Iniciar sesión</button>
+          <a href="#" class="forgot-pass">¿Olvidaste tu contraseña?</a>
+        </form>
+
+        <!-- Formulario 2: Crear Cuenta -->
+        <form id="form-register" class="auth-form">
+          <div class="form-group">
+            <label for="reg-nombre">Nombre</label>
+            <input type="text" id="reg-nombre" required>
+          </div>
+
+          <div class="form-group">
+            <label for="reg-celular">Celular</label>
+            <input type="tel" id="reg-celular" required>
+          </div>
+
+          <div class="form-group">
+            <label for="reg-correo">Correo</label>
+            <input type="email" id="reg-correo" required>
+          </div>
+
+          <div class="form-group">
+            <label>Fecha de nacimiento</label>
+            <div class="dob-container">
+              <input type="text" id="dob-day" placeholder="DD" maxlength="2" required>
+              <input type="text" id="dob-month" placeholder="MM" maxlength="2" required>
+              <input type="text" id="dob-year" placeholder="YYYY" maxlength="4" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit">Crear cuenta</button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+<!-- pie de pagina -->
+
+<footer class="footer-custom">
+    <p>© 2026 Film Crew. Todos los derechos reservados.</p>
+</footer>
+
+    <script src="../javascript/iniciar_sesion.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+</body>
+</html>
