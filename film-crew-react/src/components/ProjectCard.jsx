@@ -1,4 +1,7 @@
-function ProjectCard({ imagen, titulo, descripcion }) {
+
+import { Link } from "react-router-dom";
+
+function ProjectCard({ id, imagen, titulo, descripcion }) {
     return (
         <div className="card project-card h-100">
             <img
@@ -14,9 +17,12 @@ function ProjectCard({ imagen, titulo, descripcion }) {
                     {descripcion}
                 </p>
 
-                <a href="#" className="btn btn-primary mt-auto">
+                <Link
+                    to={`/proyectos/${id}`}
+                    className="btn btn-primary mt-auto"
+                >
                     Ver más
-                </a>
+                </Link>
             </div>
         </div>
     );

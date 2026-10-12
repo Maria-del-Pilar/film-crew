@@ -1,15 +1,17 @@
+
+import { Link } from "react-router-dom";
+
 function Navbar() {
     return (
         <nav className="navbar navbar-expand-lg navbar-custom">
             <div className="container-fluid">
-
-                <a className="navbar-brand" href="#">
+                <Link className="navbar-brand" to="/">
                     <img
                         src="/images/Logowhite.png"
                         alt="FILM CREW"
                         className="logo"
                     />
-                </a>
+                </Link>
 
                 <button
                     className="navbar-toggler"
@@ -18,7 +20,7 @@ function Navbar() {
                     data-bs-target="#navbarNav"
                     aria-controls="navbarNav"
                     aria-expanded="false"
-                    aria-label="Toggle navigation"
+                    aria-label="Abrir menú de navegación"
                 >
                     <span className="navbar-toggler-icon"></span>
                 </button>
@@ -28,38 +30,13 @@ function Navbar() {
                     id="navbarNav"
                 >
                     <ul className="navbar-nav">
-
                         <li className="nav-item">
-                            <a
-                                className="nav-link"
-                                aria-current="page"
-                                href="/proyectos"
-                            >
+                            <Link className="nav-link" to="/proyectos">
                                 Proyectos
-                            </a>
+                            </Link>
                         </li>
-
-                        <li className="nav-item">
-                            <a
-                                className="nav-link"
-                                href="/chats"
-                            >
-                                Chats
-                            </a>
-                        </li>
-
-                        <li className="nav-item">
-                            <a
-                                className="nav-link"
-                                href="/perfil"
-                            >
-                                Perfil
-                            </a>
-                        </li>
-
                     </ul>
                 </div>
-
             </div>
         </nav>
     );
