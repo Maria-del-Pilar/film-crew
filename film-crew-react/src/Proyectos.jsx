@@ -1,9 +1,11 @@
 
+import { useState } from "react";
 import Navbar from "./components/Navbar";
 import ProjectCard from "./components/ProjectCard";
+import SearchBar from "./components/SearchBar";
 
 function Proyectos() {
-    // Información de ejemplo para mostrar las tarjetas.
+    // Datos de ejemplo de los proyectos audiovisuales.
     const proyectos = [
         {
             id: "1",
@@ -28,24 +30,45 @@ function Proyectos() {
         },
     ];
 
+    const [busqueda, setBusqueda] = useState("");
+
+    // Filtra por título o descripción, ignorando mayúsculas y minúsculas.
+    const proyectosFiltrados = proyectos.filter((proyecto) => {
+        const texto = busqueda.toLowerCase();
+
+        return (
+            proyecto.titulo.toLowerCase().includes(texto) ||
+            proyecto.descripcion.toLowerCase().includes(texto)
+        );
+    });
+
     return (
         <>
             <Navbar />
 
             <main className="container py-5">
-                <h1 className="text-center mb-4">
-                    Proyectos
-                </h1>
+                <h1 className="text-center mb-4">Proyectos</h1>
+
+                <SearchBar onSearch={setBusqueda} />
 
                 <div className="row g-4 justify-content-center">
-                    {proyectos.map((proyecto) => (
-                        <div
-                            className="col-md-4 d-flex justify-content-center"
-                            key={proyecto.id}
-                        >
-                            <ProjectCard {...proyecto} />
+                    {proyectosFiltrados.length > 0 ? (
+                        proyectosFiltrados.map((proyecto) => (
+                            <div
+                                className="col-md-4 d-flex justify-content-center"
+                                key={proyecto.id}
+                            >
+                                <ProjectCard {...proyecto} />
+                            </div>
+                        ))
+                    ) : (
+                        <div className="col-12 text-center">
+                            <p>
+                                No se encontraron proyectos que coincidan
+                                con tu búsqueda.
+                            </p>
                         </div>
-                    ))}
+                    )}
                 </div>
             </main>
         </>
