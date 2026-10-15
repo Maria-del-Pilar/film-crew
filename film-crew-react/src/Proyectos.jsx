@@ -1,44 +1,19 @@
-
 import { useState } from "react";
 import Navbar from "./components/Navbar";
 import ProjectCard from "./components/ProjectCard";
 import SearchBar from "./components/SearchBar";
 
-function Proyectos() {
-    // Datos de ejemplo de los proyectos audiovisuales.
-    const proyectos = [
-        {
-            id: "1",
-            imagen: "/images/rollo.jpg",
-            titulo: "Cortometraje",
-            descripcion:
-                "Proyecto audiovisual que busca integrantes para la producción de un cortometraje.",
-        },
-        {
-            id: "2",
-            imagen: "/images/rollo.jpg",
-            titulo: "Documental",
-            descripcion:
-                "Proyecto documental en búsqueda de colaboradores para producción y edición.",
-        },
-        {
-            id: "3",
-            imagen: "/images/rollo.jpg",
-            titulo: "Videoclip",
-            descripcion:
-                "Producción audiovisual para un videoclip que requiere diferentes perfiles creativos.",
-        },
-    ];
-
+function Proyectos({ proyectos }) {
     const [busqueda, setBusqueda] = useState("");
 
-    // Filtra por título o descripción, ignorando mayúsculas y minúsculas.
     const proyectosFiltrados = proyectos.filter((proyecto) => {
         const texto = busqueda.toLowerCase();
 
         return (
             proyecto.titulo.toLowerCase().includes(texto) ||
-            proyecto.descripcion.toLowerCase().includes(texto)
+            proyecto.descripcion.toLowerCase().includes(texto) ||
+            proyecto.tipo.toLowerCase().includes(texto) ||
+            proyecto.ubicacion.toLowerCase().includes(texto)
         );
     });
 
@@ -76,3 +51,4 @@ function Proyectos() {
 }
 
 export default Proyectos;
+

@@ -35,6 +35,11 @@ function Navbar() {
                                 Proyectos
                             </Link>
                         </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/proyectos/nuevo">
+                                Publicar proyecto
+                            </Link>
+                        </li>
                     </ul>
                 </div>
             </div>
