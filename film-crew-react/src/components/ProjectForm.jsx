@@ -15,6 +15,8 @@ function ProjectForm({ onCrearProyecto}) {
     });
 
     const [mensaje, setMensaje] = useState("");
+    const [enviando, setEnviando] = useState(false);
+    const [errorPublicacion, setErrorPublicacion] = useState(false);
 
     // Actualiza el campo que el usuario modifica.
     function manejarCambio(event) {
@@ -29,22 +31,43 @@ function ProjectForm({ onCrearProyecto}) {
     }
 
     // Comprueba los campos y muestra una confirmación.
-    function manejarEnvio(event) {
-    event.preventDefault();
+    async function manejarEnvio(event) {
+        event.preventDefault();
 
-    onCrearProyecto(formulario);
+        if (enviando) return;
 
-    setMensaje(
-        `El proyecto "${formulario.titulo}" se publicó correctamente.`
-    );
+        setEnviando(true);
+        setMensaje("");
 
-    setFormulario({
-        titulo: "",
-        tipo: "",
-        descripcion: "",
-        roles: "",
-        ubicacion: "",
-    });
+        try {
+
+            setErrorPublicacion(false);
+
+            await onCrearProyecto(formulario);
+
+            setMensaje(
+                `El proyecto "${formulario.titulo}" se publicó correctamente.`
+            );
+
+            setFormulario({
+                titulo: "",
+                tipo: "",
+                descripcion: "",
+                roles: "",
+                ubicacion: "",
+            });
+
+        } catch (error) {
+
+            setErrorPublicacion(true);
+
+            console.error("Error al publicar el proyecto:", error);
+            setMensaje(
+                error.message || "No fue posible publicar el proyecto."
+            );
+        } finally {
+            setEnviando(false);
+        }
     }
 
     return (
@@ -143,24 +166,35 @@ function ProjectForm({ onCrearProyecto}) {
                     />
                 </div>
 
-                <button type="submit" className="btn btn-primary">
-                    Publicar proyecto
+                <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={enviando}
+                >
+                    {enviando ? "Publicando..." : "Publicar proyecto"}
                 </button>
+
             </form>
 
+                
                 {mensaje && (
-                    <div className="alert alert-success mt-4" role="status">
+                    <div
+                        className={`alert ${errorPublicacion ? "alert-danger" : "alert-success"} mt-4`}
+                        role="status"
+                    >
                         <p className="mb-3">{mensaje}</p>
 
-                        <button
-                            type="button"
-                            className="btn btn-success"
-                            onClick={() => navigate("/proyectos")}
-                        >
-                            Ir a proyectos
-                        </button>
+                        {!errorPublicacion && (
+                            <button
+                                type="button"
+                                className="btn btn-success"
+                                onClick={() => navigate("/proyectos")}
+                            >
+                                Ir a proyectos
+                            </button>
+                        )}
                     </div>
-                )}
+                )}               
 
         </section>
     );

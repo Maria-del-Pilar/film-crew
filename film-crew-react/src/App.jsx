@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { obtenerProyectos, crearProyecto } from "./services/api";
 import {
     BrowserRouter,
     Routes,
@@ -12,49 +13,58 @@ import DetalleProyecto from "./DetalleProyecto";
 import ProjectForm from "./components/ProjectForm";
 
 function App() {
-    const [proyectos, setProyectos] = useState([
-        {
-            id: "1",
-            imagen: "/images/rollo.jpg",
-            titulo: "Cortometraje",
-            descripcion:
-                "Proyecto audiovisual que busca integrantes para la producción de un cortometraje.",
-            tipo: "Cortometraje",
-            roles: "Dirección, fotografía y edición",
-            ubicacion: "Duitama, Colombia",
-        },
-        {
-            id: "2",
-            imagen: "/images/rollo.jpg",
-            titulo: "Documental",
-            descripcion:
-                "Proyecto documental en búsqueda de colaboradores para producción y edición.",
-            tipo: "Documental",
-            roles: "Producción y edición",
-            ubicacion: "Colombia",
-        },
-        {
-            id: "3",
-            imagen: "/images/rollo.jpg",
-            titulo: "Videoclip",
-            descripcion:
-                "Producción audiovisual para un videoclip que requiere diferentes perfiles creativos.",
-            tipo: "Videoclip",
-            roles: "Cámara y dirección de arte",
-            ubicacion: "Colombia",
-        },
+    const [proyectos, setProyectos] = useState([]);
+    const [cargando, setCargando] = useState(true);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        async function cargarProyectos() {
+            try {
+                const datos = await obtenerProyectos();
+                setProyectos(
+                    datos.map((proyecto) => ({
+                        ...proyecto,
+                        id: proyecto.id_proyecto,
+                        imagen: "/images/rollo.jpg",
+                    }))
+                );
+
+            } catch (error) {
+                console.error("Error:", error);
+                setError("No fue posible cargar los proyectos.");
+            } finally {
+                setCargando(false);
+            }
+        }
+
+    cargarProyectos();
+}, []);
+
+if (cargando) {
+    return <p className="text-center mt-5">Cargando proyectos...</p>;
+}
+
+if (error) {
+    return <p className="text-center mt-5">{error}</p>;
+}
+
+async function agregarProyecto(nuevoProyecto) {
+    const respuesta = await crearProyecto(nuevoProyecto);
+
+    const proyectoGuardado = {
+        ...nuevoProyecto,
+        id: respuesta.id_proyecto,
+        id_proyecto: respuesta.id_proyecto,
+        imagen: "/images/rollo.jpg",
+    };
+
+    setProyectos((proyectosActuales) => [
+        ...proyectosActuales,
+        proyectoGuardado,
     ]);
 
-    function agregarProyecto(nuevoProyecto) {
-        setProyectos((proyectosActuales) => [
-            ...proyectosActuales,
-            {
-                ...nuevoProyecto,
-                id: String(Date.now()),
-                imagen: "/images/rollo.jpg",
-            },
-        ]);
-    }
+    return proyectoGuardado;
+}
 
     return (
         <BrowserRouter>

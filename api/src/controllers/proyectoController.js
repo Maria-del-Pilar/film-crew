@@ -20,9 +20,9 @@ async function obtenerProyectos(req, res) {
 // Registrar un proyecto nuevo.
 async function crearProyecto(req, res) {
     try {
-        const { titulo, descripcion, ubicacion, id_usuario } = req.body;
+        const { titulo, tipo, descripcion, roles, ubicacion, id_usuario } = req.body;
 
-        if (!titulo || !descripcion || !ubicacion || !id_usuario) {
+        if (!titulo || !tipo || !descripcion || !roles || !ubicacion || !id_usuario) {
             return res.status(400).json({
                 mensaje: 'Todos los campos son obligatorios'
             });
@@ -30,9 +30,9 @@ async function crearProyecto(req, res) {
 
         const [resultado] = await pool.query(
             `INSERT INTO proyecto
-            (titulo, descripcion, ubicacion, estado, id_usuario)
-            VALUES (?, ?, ?, 'Activo', ?)`,
-            [titulo, descripcion, ubicacion, id_usuario]
+            (titulo, tipo, descripcion, roles, ubicacion, estado, id_usuario)
+            VALUES (?, ?, ?, ?, ?, 'Activo', ?)`,
+            [titulo, tipo, descripcion, roles, ubicacion, id_usuario]
         );
 
         res.status(201).json({
