@@ -1,16 +1,41 @@
 import { useState, useEffect } from "react";
-import { obtenerProyectos, crearProyecto } from "./services/api";
+import { 
+        obtenerProyectos, 
+        crearProyecto, 
+        actualizarProyecto,
+        eliminarProyecto 
+} from "./services/api";
 import {
     BrowserRouter,
     Routes,
     Route,
-    Navigate
+    Navigate,
+    useParams
 } from "react-router-dom";
 
 import Inicio from "./Inicio";
 import Proyectos from "./Proyectos";
 import DetalleProyecto from "./DetalleProyecto";
 import ProjectForm from "./components/ProjectForm";
+
+function EditarProyecto({ proyectos, onActualizarProyecto }) {
+    const { id } = useParams();
+
+    const proyecto = proyectos.find(
+        (p) => String(p.id_proyecto) === id
+    );
+
+    if (!proyecto) {
+        return <p className="text-center mt-5">Proyecto no encontrado.</p>;
+    }
+
+    return (
+        <ProjectForm
+            proyecto={proyecto}
+            onActualizarProyecto={onActualizarProyecto}
+        />
+    );
+}
 
 function App() {
     const [proyectos, setProyectos] = useState([]);
@@ -66,6 +91,28 @@ async function agregarProyecto(nuevoProyecto) {
     return proyectoGuardado;
 }
 
+async function editarProyecto(id, datosActualizados) {
+    await actualizarProyecto(id, datosActualizados);
+
+    setProyectos((proyectosActuales) =>
+        proyectosActuales.map((proyecto) =>
+            proyecto.id_proyecto === id
+                ? { ...proyecto, ...datosActualizados }
+                : proyecto
+        )
+    );
+}
+
+async function borrarProyecto(id) {
+    await eliminarProyecto(id);
+
+    setProyectos((proyectosActuales) =>
+        proyectosActuales.filter(
+            (proyecto) => proyecto.id_proyecto !== id
+        )
+    );
+}
+
     return (
         <BrowserRouter>
             <Routes>
@@ -73,7 +120,12 @@ async function agregarProyecto(nuevoProyecto) {
 
                 <Route
                     path="/proyectos"
-                    element={<Proyectos proyectos={proyectos} />}
+                    element={
+                        <Proyectos
+                            proyectos={proyectos}
+                            onEliminarProyecto={borrarProyecto}
+                        />
+                    }
                 />
 
                 <Route
@@ -81,6 +133,16 @@ async function agregarProyecto(nuevoProyecto) {
                     element={
                         <ProjectForm
                             onCrearProyecto={agregarProyecto}
+                        />
+                    }
+                />
+
+                <Route
+                    path="/proyectos/:id/editar"
+                    element={
+                        <EditarProyecto
+                            proyectos={proyectos}
+                            onActualizarProyecto={editarProyecto}
                         />
                     }
                 />

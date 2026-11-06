@@ -1,9 +1,8 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-function ProjectForm({ onCrearProyecto}) {
-
+function ProjectForm({ proyecto, onCrearProyecto, onActualizarProyecto }) {
     const navigate = useNavigate();
 
     const [formulario, setFormulario] = useState({
@@ -12,13 +11,28 @@ function ProjectForm({ onCrearProyecto}) {
         descripcion: "",
         roles: "",
         ubicacion: "",
+        estado: "Activo",
     });
 
     const [mensaje, setMensaje] = useState("");
     const [enviando, setEnviando] = useState(false);
     const [errorPublicacion, setErrorPublicacion] = useState(false);
 
-    // Actualiza el campo que el usuario modifica.
+    const modoEdicion = Boolean(proyecto);
+
+    useEffect(() => {
+        if (proyecto) {
+            setFormulario({
+                titulo: proyecto.titulo || "",
+                tipo: proyecto.tipo || "",
+                descripcion: proyecto.descripcion || "",
+                roles: proyecto.roles || "",
+                ubicacion: proyecto.ubicacion || "",
+                estado: proyecto.estado || "Activo",
+            });
+        }
+    }, [proyecto]);
+
     function manejarCambio(event) {
         const { name, value } = event.target;
 
@@ -30,7 +44,6 @@ function ProjectForm({ onCrearProyecto}) {
         setMensaje("");
     }
 
-    // Comprueba los campos y muestra una confirmación.
     async function manejarEnvio(event) {
         event.preventDefault();
 
@@ -40,31 +53,30 @@ function ProjectForm({ onCrearProyecto}) {
         setMensaje("");
 
         try {
-
             setErrorPublicacion(false);
 
-            await onCrearProyecto(formulario);
+            if (modoEdicion) {
+                await onActualizarProyecto(proyecto.id_proyecto, formulario);
+                setMensaje("El proyecto se actualizó correctamente.");
+            } else {
+                await onCrearProyecto(formulario);
+                setMensaje(
+                    `El proyecto "${formulario.titulo}" se publicó correctamente.`
+                );
 
-            setMensaje(
-                `El proyecto "${formulario.titulo}" se publicó correctamente.`
-            );
-
-            setFormulario({
-                titulo: "",
-                tipo: "",
-                descripcion: "",
-                roles: "",
-                ubicacion: "",
-            });
-
+                setFormulario({
+                    titulo: "",
+                    tipo: "",
+                    descripcion: "",
+                    roles: "",
+                    ubicacion: "",
+                    estado: "Activo",
+                });
+            }
         } catch (error) {
-
             setErrorPublicacion(true);
-
-            console.error("Error al publicar el proyecto:", error);
-            setMensaje(
-                error.message || "No fue posible publicar el proyecto."
-            );
+            console.error("Error al guardar el proyecto:", error);
+            setMensaje(error.message || "No fue posible guardar el proyecto.");
         } finally {
             setEnviando(false);
         }
@@ -72,14 +84,18 @@ function ProjectForm({ onCrearProyecto}) {
 
     return (
         <section className="container py-5">
-            <h1 className="mb-4">Publicar un proyecto</h1>
+            <h1 className="mb-4">
+                {modoEdicion ? "Editar proyecto" : "Publicar un proyecto"}
+            </h1>
 
             <button
                 type="button"
                 className="btn btn-outline-secondary mb-4"
-                onClick={() => navigate("/proyectos")}
+                onClick={() => navigate(
+                    modoEdicion ? `/proyectos/${proyecto.id_proyecto}` : "/proyectos"
+                )}
             >
-                Volver a proyectos
+                Volver
             </button>
 
             <form onSubmit={manejarEnvio}>
@@ -143,7 +159,6 @@ function ProjectForm({ onCrearProyecto}) {
                         name="roles"
                         type="text"
                         className="form-control"
-                        placeholder="Ej. dirección, fotografía y edición"
                         value={formulario.roles}
                         onChange={manejarCambio}
                         required
@@ -159,45 +174,75 @@ function ProjectForm({ onCrearProyecto}) {
                         name="ubicacion"
                         type="text"
                         className="form-control"
-                        placeholder="Ej. Duitama, Colombia"
                         value={formulario.ubicacion}
                         onChange={manejarCambio}
                         required
                     />
                 </div>
 
+                {modoEdicion && (
+                    <div className="mb-3">
+                        <label htmlFor="estado" className="form-label">
+                            Estado del proyecto
+                        </label>
+                        <select
+                            id="estado"
+                            name="estado"
+                            className="form-select"
+                            value={formulario.estado}
+                            onChange={manejarCambio}
+                            required
+                        >
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                )}
+
                 <button
                     type="submit"
                     className="btn btn-primary"
                     disabled={enviando}
                 >
-                    {enviando ? "Publicando..." : "Publicar proyecto"}
+                    {enviando
+                        ? "Guardando..."
+                        : modoEdicion
+                            ? "Guardar cambios"
+                            : "Publicar proyecto"}
                 </button>
-
             </form>
 
-                
-                {mensaje && (
-                    <div
-                        className={`alert ${errorPublicacion ? "alert-danger" : "alert-success"} mt-4`}
-                        role="status"
-                    >
-                        <p className="mb-3">{mensaje}</p>
+            {mensaje && (
+                <div
+                    className={`alert ${errorPublicacion ? "alert-danger" : "alert-success"} mt-4`}
+                    role="status"
+                >
+                    <p className="mb-3">{mensaje}</p>
 
-                        {!errorPublicacion && (
-                            <button
-                                type="button"
-                                className="btn btn-success"
-                                onClick={() => navigate("/proyectos")}
-                            >
-                                Ir a proyectos
-                            </button>
-                        )}
-                    </div>
-                )}               
+                    {!errorPublicacion && modoEdicion && (
+                        <button
+                            type="button"
+                            className="btn btn-success"
+                            onClick={() => navigate(`/proyectos/${proyecto.id_proyecto}`)}
+                        >
+                            Volver al proyecto
+                        </button>
+                    )}
 
+                    {!errorPublicacion && !modoEdicion && (
+                        <button
+                            type="button"
+                            className="btn btn-success"
+                            onClick={() => navigate("/proyectos")}
+                        >
+                            Ir a proyectos
+                        </button>
+                    )}
+                </div>
+            )}
         </section>
     );
 }
 
 export default ProjectForm;
+

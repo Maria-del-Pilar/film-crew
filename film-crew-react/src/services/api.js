@@ -30,3 +30,47 @@ export async function crearProyecto(proyecto) {
 
     return datos;
 }
+
+export async function obtenerProyectoPorId(id) {
+    const respuesta = await fetch(`${API_URL}/proyectos/${id}`);
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+        throw new Error(datos.mensaje || "No fue posible obtener el proyecto");
+    }
+
+    return datos;
+}
+
+export async function actualizarProyecto(id, proyecto) {
+    const respuesta = await fetch(`${API_URL}/proyectos/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(proyecto),
+    });
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+        throw new Error(datos.mensaje || "No fue posible actualizar el proyecto");
+    }
+
+    return datos;
+}
+
+export async function eliminarProyecto(id) {
+    const respuesta = await fetch(`${API_URL}/proyectos/${id}`, {
+        method: "DELETE",
+    });
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+        throw new Error(datos.mensaje || "No fue posible eliminar el proyecto");
+    }
+
+    return datos;
+}

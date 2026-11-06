@@ -1,7 +1,13 @@
 
 import { Link } from "react-router-dom";
 
-function ProjectCard({ id, imagen, titulo, descripcion }) {
+function ProjectCard({ 
+                        id, 
+                        imagen, 
+                        titulo, 
+                        descripcion,
+                        onEliminarProyecto
+ }) {
     return (
         <div className="card project-card h-100">
             <img
@@ -23,6 +29,27 @@ function ProjectCard({ id, imagen, titulo, descripcion }) {
                 >
                     Ver más
                 </Link>
+
+            <button
+                className="btn btn-outline-danger mt-2"
+                onClick={async () => {
+                    const confirmar = window.confirm(
+                        `¿Estás seguro de eliminar el proyecto "${titulo}"?`
+                    );
+
+                    if (confirmar) {
+                        try {
+                            await onEliminarProyecto(id);
+                            window.alert("Proyecto eliminado correctamente.");
+                        } catch (error) {
+                            window.alert(error.message);
+                        }
+                    }
+                }}
+            >
+                Eliminar proyecto
+            </button>
+
             </div>
         </div>
     );

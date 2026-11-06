@@ -3,7 +3,7 @@ import Navbar from "./components/Navbar";
 import ProjectCard from "./components/ProjectCard";
 import SearchBar from "./components/SearchBar";
 
-function Proyectos({ proyectos }) {
+function Proyectos({ proyectos, onEliminarProyecto }) {
     const [busqueda, setBusqueda] = useState("");
 
     const proyectosFiltrados = proyectos.filter((proyecto) => {
@@ -33,7 +33,10 @@ function Proyectos({ proyectos }) {
                                 className="col-md-4 d-flex justify-content-center"
                                 key={proyecto.id}
                             >
-                                <ProjectCard {...proyecto} />
+                                <ProjectCard
+                                    {...proyecto}
+                                    onEliminarProyecto={onEliminarProyecto}
+                                />
                             </div>
                         ))
                     ) : (

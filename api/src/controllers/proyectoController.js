@@ -79,9 +79,16 @@ async function obtenerProyectoPorId(req, res) {
 async function actualizarProyecto(req, res) {
     try {
         const { id } = req.params;
-        const { titulo, descripcion, ubicacion, estado } = req.body;
+        const {
+            titulo,
+            tipo,
+            descripcion,
+            roles,
+            ubicacion,
+            estado
+        } = req.body;
 
-        if (!titulo || !descripcion || !ubicacion || !estado) {
+        if (!titulo || !tipo || !descripcion || !roles || !ubicacion || !estado) {
             return res.status(400).json({
                 mensaje: 'Todos los campos son obligatorios'
             });
@@ -95,9 +102,10 @@ async function actualizarProyecto(req, res) {
 
         const [resultado] = await pool.query(
             `UPDATE proyecto
-             SET titulo = ?, descripcion = ?, ubicacion = ?, estado = ?
+             SET titulo = ?, tipo = ?, descripcion = ?,
+                 roles = ?, ubicacion = ?, estado = ?
              WHERE id_proyecto = ?`,
-            [titulo, descripcion, ubicacion, estado, id]
+            [titulo, tipo, descripcion, roles, ubicacion, estado, id]
         );
 
         if (resultado.affectedRows === 0) {
@@ -124,6 +132,19 @@ async function eliminarProyecto(req, res) {
     try {
         const { id } = req.params;
 
+        // Verificar si el proyecto tiene postulaciones
+        const [postulaciones] = await pool.query(
+            'SELECT id_postulacion FROM postulacion WHERE id_proyecto = ?',
+            [id]
+        );
+
+        if (postulaciones.length > 0) {
+            return res.status(409).json({
+                mensaje: 'No se puede eliminar el proyecto porque tiene postulaciones registradas'
+            });
+        }
+
+        // Eliminar el proyecto
         const [resultado] = await pool.query(
             'DELETE FROM proyecto WHERE id_proyecto = ?',
             [id]
