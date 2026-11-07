@@ -1,8 +1,15 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
 
-function ProjectForm({ proyecto, onCrearProyecto, onActualizarProyecto }) {
+function ProjectForm({ 
+    proyecto, 
+    onCrearProyecto, 
+    onActualizarProyecto,
+    usuario,
+    onCerrarSesion 
+}) {
     const navigate = useNavigate();
 
     const [formulario, setFormulario] = useState({
@@ -83,6 +90,12 @@ function ProjectForm({ proyecto, onCrearProyecto, onActualizarProyecto }) {
     }
 
     return (
+        <>
+            <Navbar
+                usuario={usuario}
+                onCerrarSesion={onCerrarSesion}
+            />
+
         <section className="container py-5">
             <h1 className="mb-4">
                 {modoEdicion ? "Editar proyecto" : "Publicar un proyecto"}
@@ -241,6 +254,7 @@ function ProjectForm({ proyecto, onCrearProyecto, onActualizarProyecto }) {
                 </div>
             )}
         </section>
+    </>
     );
 }
 

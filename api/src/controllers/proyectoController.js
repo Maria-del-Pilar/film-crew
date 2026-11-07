@@ -20,9 +20,11 @@ async function obtenerProyectos(req, res) {
 // Registrar un proyecto nuevo.
 async function crearProyecto(req, res) {
     try {
-        const { titulo, tipo, descripcion, roles, ubicacion, id_usuario } = req.body;
+        const { titulo, tipo, descripcion, roles, ubicacion } = req.body;
 
-        if (!titulo || !tipo || !descripcion || !roles || !ubicacion || !id_usuario) {
+        const id_usuario = req.usuario.id_usuario;
+
+        if (!titulo || !tipo || !descripcion || !roles || !ubicacion ) {
             return res.status(400).json({
                 mensaje: 'Todos los campos son obligatorios'
             });
@@ -79,6 +81,9 @@ async function obtenerProyectoPorId(req, res) {
 async function actualizarProyecto(req, res) {
     try {
         const { id } = req.params;
+
+        const id_usuario = req.usuario.id_usuario;
+
         const {
             titulo,
             tipo,
@@ -97,6 +102,18 @@ async function actualizarProyecto(req, res) {
         if (!['Activo', 'Inactivo'].includes(estado)) {
             return res.status(400).json({
                 mensaje: 'El estado debe ser Activo o Inactivo'
+            });
+        }
+
+        // Verificar que el proyecto pertenezca al usuario autenticado.
+        const [proyectos] = await pool.query(
+            'SELECT id_proyecto FROM proyecto WHERE id_proyecto = ? AND id_usuario = ?',
+            [id, id_usuario]
+        );
+
+        if (proyectos.length === 0) {
+            return res.status(403).json({
+                mensaje: 'No tienes permiso para editar este proyecto'
             });
         }
 
@@ -131,6 +148,20 @@ async function actualizarProyecto(req, res) {
 async function eliminarProyecto(req, res) {
     try {
         const { id } = req.params;
+
+        const id_usuario = req.usuario.id_usuario;
+
+        // Verificar que el proyecto pertenezca al usuario autenticado.
+        const [proyectos] = await pool.query(
+            'SELECT id_proyecto FROM proyecto WHERE id_proyecto = ? AND id_usuario = ?',
+            [id, id_usuario]
+        );
+
+        if (proyectos.length === 0) {
+            return res.status(403).json({
+                mensaje: 'No tienes permiso para eliminar este proyecto'
+            });
+        }
 
         // Verificar si el proyecto tiene postulaciones
         const [postulaciones] = await pool.query(

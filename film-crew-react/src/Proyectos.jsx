@@ -3,7 +3,12 @@ import Navbar from "./components/Navbar";
 import ProjectCard from "./components/ProjectCard";
 import SearchBar from "./components/SearchBar";
 
-function Proyectos({ proyectos, onEliminarProyecto }) {
+function Proyectos({ 
+    proyectos, 
+    onEliminarProyecto,
+    usuario,
+    onCerrarSesion
+}) {
     const [busqueda, setBusqueda] = useState("");
 
     const proyectosFiltrados = proyectos.filter((proyecto) => {
@@ -19,7 +24,10 @@ function Proyectos({ proyectos, onEliminarProyecto }) {
 
     return (
         <>
-            <Navbar />
+            <Navbar
+                usuario={usuario}
+                onCerrarSesion={onCerrarSesion}
+            />
 
             <main className="container py-5">
                 <h1 className="text-center mb-4">Proyectos</h1>
@@ -35,6 +43,7 @@ function Proyectos({ proyectos, onEliminarProyecto }) {
                             >
                                 <ProjectCard
                                     {...proyecto}
+                                    usuario={usuario}
                                     onEliminarProyecto={onEliminarProyecto}
                                 />
                             </div>

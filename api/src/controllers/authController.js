@@ -1,6 +1,7 @@
 
 const pool = require('../config/db');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // Registrar un usuario nuevo.
 async function registrarUsuario(req, res) {
@@ -99,9 +100,23 @@ async function iniciarSesion(req, res) {
             });
         }
 
-        // No enviar el hash de la contraseña al cliente.
+        // Generar token JWT.
+        const token = jwt.sign(
+            {
+                id_usuario: usuario.id_usuario,
+                correo: usuario.correo,
+                rol: usuario.rol
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: '2h'
+            }
+        );
+
+        // Responder con el token y los datos del usuario.
         return res.status(200).json({
             mensaje: 'Inicio de sesión exitoso',
+            token,
             usuario: {
                 id_usuario: usuario.id_usuario,
                 nombre: usuario.nombre,

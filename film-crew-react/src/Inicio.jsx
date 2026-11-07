@@ -2,10 +2,13 @@
 import { Link } from "react-router-dom";
 import Navbar from "./components/Navbar";
 
-function Inicio() {
+function Inicio({ usuario, onCerrarSesion}) {
     return (
         <>
-            <Navbar />
+            <Navbar
+                usuario={usuario}
+                onCerrarSesion={onCerrarSesion}
+            />
 
             <main className="container py-5 text-center">
                 <h1>FILM CREW CONNECT</h1>

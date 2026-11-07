@@ -3,7 +3,8 @@ import {
         obtenerProyectos, 
         crearProyecto, 
         actualizarProyecto,
-        eliminarProyecto 
+        eliminarProyecto,
+        iniciarSesion 
 } from "./services/api";
 import {
     BrowserRouter,
@@ -17,8 +18,15 @@ import Inicio from "./Inicio";
 import Proyectos from "./Proyectos";
 import DetalleProyecto from "./DetalleProyecto";
 import ProjectForm from "./components/ProjectForm";
+import Login from "./Login";
 
-function EditarProyecto({ proyectos, onActualizarProyecto }) {
+function EditarProyecto({ 
+    proyectos,
+    onActualizarProyecto,
+    usuario,
+    onCerrarSesion
+}) {
+
     const { id } = useParams();
 
     const proyecto = proyectos.find(
@@ -33,6 +41,8 @@ function EditarProyecto({ proyectos, onActualizarProyecto }) {
         <ProjectForm
             proyecto={proyecto}
             onActualizarProyecto={onActualizarProyecto}
+            usuario={usuario}
+            onCerrarSesion={onCerrarSesion}
         />
     );
 }
@@ -41,6 +51,36 @@ function App() {
     const [proyectos, setProyectos] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState("");
+
+        const [token, setToken] = useState(
+        localStorage.getItem("token") || ""
+    );
+
+    const [usuario, setUsuario] = useState(() => {
+        const usuarioGuardado = localStorage.getItem("usuario");
+
+        return usuarioGuardado
+            ? JSON.parse(usuarioGuardado)
+            : null;
+    });
+
+async function manejarInicioSesion(correo, contraseña) {
+    const datos = await iniciarSesion(correo, contraseña);
+
+    localStorage.setItem("token", datos.token);
+    localStorage.setItem("usuario", JSON.stringify(datos.usuario));
+
+    setToken(datos.token);
+    setUsuario(datos.usuario);
+}
+
+function cerrarSesion() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
+
+    setToken("");
+    setUsuario(null);
+}
 
     useEffect(() => {
         async function cargarProyectos() {
@@ -74,12 +114,13 @@ if (error) {
 }
 
 async function agregarProyecto(nuevoProyecto) {
-    const respuesta = await crearProyecto(nuevoProyecto);
+    const respuesta = await crearProyecto(nuevoProyecto, token);
 
     const proyectoGuardado = {
         ...nuevoProyecto,
         id: respuesta.id_proyecto,
         id_proyecto: respuesta.id_proyecto,
+        id_usuario: usuario.id_usuario,
         imagen: "/images/rollo.jpg",
     };
 
@@ -92,7 +133,7 @@ async function agregarProyecto(nuevoProyecto) {
 }
 
 async function editarProyecto(id, datosActualizados) {
-    await actualizarProyecto(id, datosActualizados);
+    await actualizarProyecto(id, datosActualizados, token);
 
     setProyectos((proyectosActuales) =>
         proyectosActuales.map((proyecto) =>
@@ -104,7 +145,7 @@ async function editarProyecto(id, datosActualizados) {
 }
 
 async function borrarProyecto(id) {
-    await eliminarProyecto(id);
+    await eliminarProyecto(id, token);
 
     setProyectos((proyectosActuales) =>
         proyectosActuales.filter(
@@ -116,7 +157,22 @@ async function borrarProyecto(id) {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<Inicio />} />
+                <Route
+                    path="/"
+                    element={
+                        <Inicio
+                            usuario={usuario}
+                            onCerrarSesion={cerrarSesion}
+                        />
+                    }
+                />
+
+                <Route
+                    path="/login"
+                    element={
+                        <Login onIniciarSesion={manejarInicioSesion} />
+                    }
+                />
 
                 <Route
                     path="/proyectos"
@@ -124,6 +180,8 @@ async function borrarProyecto(id) {
                         <Proyectos
                             proyectos={proyectos}
                             onEliminarProyecto={borrarProyecto}
+                            usuario={usuario}
+                            onCerrarSesion={cerrarSesion}
                         />
                     }
                 />
@@ -131,25 +189,42 @@ async function borrarProyecto(id) {
                 <Route
                     path="/proyectos/nuevo"
                     element={
-                        <ProjectForm
-                            onCrearProyecto={agregarProyecto}
-                        />
+                        usuario ? (
+                            <ProjectForm
+                                onCrearProyecto={agregarProyecto}
+                                usuario={usuario}
+                                onCerrarSesion={cerrarSesion}
+                            />
+                        ) : (
+                            <Navigate to="/login" replace />
+                        )
                     }
                 />
 
                 <Route
                     path="/proyectos/:id/editar"
                     element={
-                        <EditarProyecto
-                            proyectos={proyectos}
-                            onActualizarProyecto={editarProyecto}
-                        />
+                        usuario ? (
+                            <EditarProyecto
+                                proyectos={proyectos}
+                                onActualizarProyecto={editarProyecto}
+                                usuario={usuario}
+                                onCerrarSesion={cerrarSesion}
+                            />
+                        ) : (
+                            <Navigate to="/login" replace />
+                        )
                     }
                 />
 
                 <Route
                     path="/proyectos/:id"
-                    element={<DetalleProyecto />}
+                    element={
+                        <DetalleProyecto
+                            usuario={usuario}
+                            onCerrarSesion={cerrarSesion}
+                        />
+                    }
                 />
 
                 <Route

@@ -4,7 +4,7 @@ import { useParams, Link } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import { obtenerProyectoPorId } from "./services/api";
 
-function DetalleProyecto() {
+function DetalleProyecto({ usuario, onCerrarSesion}) {
     const { id } = useParams();
 
     const [proyecto, setProyecto] = useState(null);
@@ -45,7 +45,10 @@ function DetalleProyecto() {
 
     return (
         <>
-            <Navbar />
+            <Navbar
+                usuario={usuario}
+                onCerrarSesion={onCerrarSesion}
+            />
 
             <main className="container py-5">
                 <h1 className="mb-4">{proyecto.titulo}</h1>
@@ -64,12 +67,15 @@ function DetalleProyecto() {
                     <p>{proyecto.ubicacion}</p>
                 </div>
 
-                <Link
-                    to={`/proyectos/${proyecto.id_proyecto}/editar`}
-                    className="btn btn-primary mt-4 me-2"
-                >
-                    Editar proyecto
-                </Link>
+                {usuario &&
+                    String(usuario.id_usuario) === String(proyecto.id_usuario) && (
+                        <Link
+                            to={`/proyectos/${proyecto.id_proyecto}/editar`}
+                            className="btn btn-primary mt-4 me-2"
+                        >
+                            Editar proyecto
+                        </Link>
+                    )}
 
                 <Link
                     to="/proyectos"

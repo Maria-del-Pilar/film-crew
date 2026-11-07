@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 
-function Navbar() {
+function Navbar({ usuario, onCerrarSesion }) {
     return (
         <nav className="navbar navbar-expand-lg navbar-custom">
             <div className="container-fluid">
@@ -35,11 +35,37 @@ function Navbar() {
                                 Proyectos
                             </Link>
                         </li>
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/proyectos/nuevo">
-                                Publicar proyecto
-                            </Link>
-                        </li>
+
+                        {usuario ? (
+                            <>
+                                <li className="nav-item">
+                                    <Link className="nav-link" to="/proyectos/nuevo">
+                                        Publicar proyecto
+                                    </Link>
+                                </li>
+
+                                <li className="nav-item">
+                                    <span className="nav-link">
+                                        Hola, {usuario.nombre}
+                                    </span>
+                                </li>
+
+                                <li className="nav-item">
+                                    <button
+                                        className="nav-link btn"
+                                        onClick={onCerrarSesion}
+                                    >
+                                        Cerrar sesión
+                                    </button>
+                                </li>
+                            </>
+                        ) : (
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/login">
+                                    Iniciar sesión
+                                </Link>
+                            </li>
+                        )}
                     </ul>
                 </div>
             </div>

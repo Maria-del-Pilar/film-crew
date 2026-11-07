@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 
 function ProjectCard({ 
                         id, 
+                        id_usuario,
                         imagen, 
                         titulo, 
                         descripcion,
-                        onEliminarProyecto
+                        usuario,
+                        onEliminarProyecto,
  }) {
     return (
         <div className="card project-card h-100">
@@ -30,25 +32,28 @@ function ProjectCard({
                     Ver más
                 </Link>
 
-            <button
-                className="btn btn-outline-danger mt-2"
-                onClick={async () => {
-                    const confirmar = window.confirm(
-                        `¿Estás seguro de eliminar el proyecto "${titulo}"?`
-                    );
+                {usuario &&
+                    String(usuario.id_usuario) === String(id_usuario) && (
+                        <button
+                            className="btn btn-outline-danger mt-2"
+                            onClick={async () => {
+                                const confirmar = window.confirm(
+                                    `¿Estás seguro de eliminar el proyecto "${titulo}"?`
+                                );
 
-                    if (confirmar) {
-                        try {
-                            await onEliminarProyecto(id);
-                            window.alert("Proyecto eliminado correctamente.");
-                        } catch (error) {
-                            window.alert(error.message);
-                        }
-                    }
-                }}
-            >
-                Eliminar proyecto
-            </button>
+                                if (confirmar) {
+                                    try {
+                                        await onEliminarProyecto(id);
+                                        window.alert("Proyecto eliminado correctamente.");
+                                    } catch (error) {
+                                        window.alert(error.message);
+                                    }
+                                }
+                            }}
+                        >
+                            Eliminar proyecto
+                        </button>
+                    )}
 
             </div>
         </div>

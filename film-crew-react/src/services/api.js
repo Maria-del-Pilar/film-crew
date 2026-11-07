@@ -10,16 +10,14 @@ export async function obtenerProyectos() {
     return await respuesta.json();
 }
 
-export async function crearProyecto(proyecto) {
+export async function crearProyecto(proyecto, token) {
     const respuesta = await fetch(`${API_URL}/proyectos`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify({
-            ...proyecto,
-            id_usuario: 1,
-        }),
+        body: JSON.stringify(proyecto),
     });
 
     const datos = await respuesta.json();
@@ -43,11 +41,12 @@ export async function obtenerProyectoPorId(id) {
     return datos;
 }
 
-export async function actualizarProyecto(id, proyecto) {
+export async function actualizarProyecto(id, proyecto, token) {
     const respuesta = await fetch(`${API_URL}/proyectos/${id}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(proyecto),
     });
@@ -61,15 +60,39 @@ export async function actualizarProyecto(id, proyecto) {
     return datos;
 }
 
-export async function eliminarProyecto(id) {
+export async function eliminarProyecto(id, token) {
     const respuesta = await fetch(`${API_URL}/proyectos/${id}`, {
         method: "DELETE",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+        },
     });
 
     const datos = await respuesta.json();
 
     if (!respuesta.ok) {
         throw new Error(datos.mensaje || "No fue posible eliminar el proyecto");
+    }
+
+    return datos;
+}
+
+export async function iniciarSesion(correo, contraseña) {
+    const respuesta = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            correo,
+            contraseña,
+        }),
+    });
+
+    const datos = await respuesta.json();
+
+    if (!respuesta.ok) {
+        throw new Error(datos.mensaje || "No fue posible iniciar sesión");
     }
 
     return datos;
